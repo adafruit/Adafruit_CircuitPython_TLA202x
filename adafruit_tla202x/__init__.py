@@ -162,8 +162,7 @@ class TLA2024:
         """The voltage between the two selected inputs"""
         if self.mode == Mode.ONE_SHOT:  # pylint:disable=no-member
             return self._last_one_shot
-        val = self._raw_adc_read
-        return self._convert(val)
+        return self._read_volts()
 
     @property
     def input_channel(self):
@@ -198,7 +197,7 @@ class TLA2024:
         while self._os:
             pass
 
-        self._last_one_shot = self._convert(self._raw_adc_read)
+        self._last_one_shot = self._read_volts()
 
     @property
     def data_rate(self):
@@ -225,13 +224,13 @@ class TLA2024:
             raise AttributeError("``mux`` must be a valid ``Mux``")
         self._mux = mux_connection
 
-    def read_channel_one_shot(self, channel):
-        """Switch to the given channel and take a single voltage reading"""
-        self.input_channel(channel)
+    def read(self, channel):
+        """Switch to the given channel and take a single voltage reading in One Shot mode"""
+        self.input_channel = channel
         self.mode = Mode.ONE_SHOT  # pylint:disable=no-member
         return self.voltage
 
-    def _convert(self, value):
+    def _read_volts(self):
         """From datasheet:
         ≥ +FS (2^11 – 1) / 2^11  ==>  0x7FF0
         +FS /2^11                ==>  0x0010
@@ -241,16 +240,21 @@ class TLA2024:
 
         """
 
-        value >>= 4
-        if value & (1 << 11):
-            value |= 0xF000
-        else:
-            value &= ~0xF000
-
+        value_lsb = self._read_lsb()
         v_fsr = 8192 >> self.range
         if self.range == 0:
             v_fsr = 6144
         v_fsr = float(v_fsr)
-        converted = (value / 2047.0) * v_fsr
+        converted = (value_lsb / 2047.0) * v_fsr
 
         return converted / 1000.0
+
+    def _read_lsb(self):
+        value_lsb = self._raw_adc_read
+        value_lsb >>= 4
+
+        if value_lsb & (1 << 11):
+            value_lsb |= 0xF000
+        else:
+            value_lsb &= ~0xF000
+        return value_lsb

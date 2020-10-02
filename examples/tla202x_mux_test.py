@@ -13,10 +13,10 @@ for i in range(4):
     channel = i
     tla.input_channel = channel
     print("Channel", channel, ":", tla.voltage)
-# Mux.MUX_AIN0_AIN1
+# Mux.MUX_AIN0_AIN1 X
 # Mux.MUX_AIN0_AIN3  X
 # Mux.MUX_AIN1_AIN3  X
-# Mux.MUX_AIN2_AIN3
+# Mux.MUX_AIN2_AIN3 X
 # Mux.MUX_AIN0_GND   X
 # Mux.MUX_AIN1_GND   X
 # Mux.MUX_AIN2_GND   X
@@ -33,18 +33,21 @@ muxen = [
     [Mux.MUX_AIN1_AIN3, None],
     [Mux.MUX_AIN2_AIN3, None],
 ]
-muxen[-4][1] = muxen[0][1]-muxen[1][1]
-muxen[-3][1] = muxen[0][1]-muxen[3][1]
-muxen[-2][1] = muxen[1][1]-muxen[3][1]
-muxen[-1][1] = muxen[2][1]-muxen[3][1]
+muxen[-4][1] = muxen[0][1] - muxen[1][1]
+muxen[-3][1] = muxen[0][1] - muxen[3][1]
+muxen[-2][1] = muxen[1][1] - muxen[3][1]
+muxen[-1][1] = muxen[2][1] - muxen[3][1]
 for mux, ev in muxen:
     tla.mux = mux
     name = Mux.string[mux]
     actual = tla.voltage
-    delta = abs(ev-actual)
+    delta = abs(ev - actual)
 
     if delta <= 0.01:
         result = "PASSED!"
     else:
         result = "FAIL :("
-    print("Mux: %s\tEV: %3f\tActual: %3f\tDelta: %5f\t%s"%(name, ev, actual, delta, result))
+    print(
+        "Mux: %s\tEV: %3f\tActual: %3f\tDelta: %5f\t%s"
+        % (name, ev, actual, delta, result)
+    )

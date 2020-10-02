@@ -64,43 +64,31 @@ class CV:
 
 
 class DataRate(CV):
-    """Options for ``data_rate``, for selecting the rate at which samples are taken while measuring
-    the voltage across the input pins"""
+    """Options for :py:attr:`~adafruit_tla202x.TLA2024.data_rate`, to select the rate at which
+    samples are taken while measuring the voltage across the input pins
+
+    +-------------------------------+-------------------------+
+    | Rate                          | Measurement Rate        |
+    +===============================+=========================+
+    | :py:const:`Rate.RATE_128SPS`  | 128 Samples per second  |
+    +-------------------------------+-------------------------+
+    | :py:const:`Rate.RATE_250SPS`  | 250 Samples per second  |
+    +-------------------------------+-------------------------+
+    | :py:const:`Rate.RATE_490SPS`  | 490 Samples per second  |
+    +-------------------------------+-------------------------+
+    | :py:const:`Rate.RATE_920SPS`  | 920 Samples per second  |
+    +-------------------------------+-------------------------+
+    | :py:const:`Rate.RATE_1600SPS` | 1600 Samples per second |
+    +-------------------------------+-------------------------+
+    | :py:const:`Rate.RATE_2400SPS` | 2400 Samples per second |
+    +-------------------------------+-------------------------+
+    | :py:const:`Rate.RATE_3300SPS` | 3300 Samples per second |
+    +-------------------------------+-------------------------+
 
 
-class Mode(CV):
-    """Options for ``mode``
-
-        In Continuous mode, measurements are taken continuously and calling ``voltage`` will
-        return the latest measurement.
-
-        Setting the mode to ONE_SHOT makes the ADC take a single
-        measurement and then goes into a low power state."""
+    """
 
 
-class Range(CV):
-    """Options for ``range``, used to select the measurement range by adjusting the
-    gain of the internal amplifier"""
-
-
-class Mux(CV):
-    """Options for ``mux`` to choose the inputs that voltage will be measured across"""
-
-
-Mode.add_values(
-    (("CONTINUOUS", 0, "Continuous", None), ("ONE_SHOT", 1, "One Shot", None),)
-)
-
-Range.add_values(
-    (
-        ("RANGE_6_144V", 0x0, 6.144, 3),
-        ("RANGE_4_096V", 0x1, 4.096, 2),
-        ("RANGE_2_048V", 0x2, 2.048, 1),
-        ("RANGE_1_024V", 0x3, 1.024, 0.5),
-        ("RANGE_0_512V", 0x4, 0.512, 0.25),
-        ("RANGE_0_256V", 0x5, 0.256, 0.125),
-    )
-)
 DataRate.add_values(
     (
         ("RATE_128SPS", 0x0, 128, None),
@@ -112,6 +100,93 @@ DataRate.add_values(
         ("RATE_3300SPS", 0x6, 3300, None),
     )
 )
+
+
+class Mode(CV):
+    """Options for :py:attr:`~adafruit_tla202x.TLA2024.mode`
+
+    +----------------------------+--------------------------------------------------------------+
+    | Mode                       | Description                                                  |
+    +============================+==============================================================+
+    | :py:const:`Mode.CONTINUOUS`| In Continuous mode, measurements are taken                   |
+    |                            |                                                              |
+    |                            | continuously and getting                                     |
+    |                            | :py:attr:`~adafruit_tla202x.TLA2024.voltage`                 |
+    |                            |                                                              |
+    |                            | will return the latest measurement.                          |
+    +----------------------------+--------------------------------------------------------------+
+    | :py:const:`Mode.ONE_SHOT`  | Setting the mode to :py:data:`~Mode.ONE_SHOT` takes a single |
+    |                            |                                                              |
+    |                            | measurement and then goes into a low power state.            |
+    +----------------------------+--------------------------------------------------------------+
+
+    """
+
+
+Mode.add_values(
+    (("CONTINUOUS", 0, "Continuous", None), ("ONE_SHOT", 1, "One Shot", None),)
+)
+
+
+class Range(CV):
+    """Options for :py:attr:`~adafruit_tla202x.TLA2024.range`, used to select the measurement range
+    by adjusting the gain of the internal amplifier
+
+    +--------------------------------+-------------------+------------+
+    | Range                          | Measurement Range | Resolution |
+    +================================+===================+============+
+    | :py:const:`Range.RANGE_6_144V` | ±6.144 V          | 3 mV       |
+    +--------------------------------+-------------------+------------+
+    | :py:const:`Range.RANGE_4_096V` | ±4.096 V          | 2 mV       |
+    +--------------------------------+-------------------+------------+
+    | :py:const:`Range.RANGE_2_048V` | ±2.048 V          | 1 mV       |
+    +--------------------------------+-------------------+------------+
+    | :py:const:`Range.RANGE_1_024V` | ±1.024 V          | 0.5 mV     |
+    +--------------------------------+-------------------+------------+
+    | :py:const:`Range.RANGE_0_512V` | ±0.512 V          | 0.25 mV    |
+    +--------------------------------+-------------------+------------+
+
+    """
+
+
+Range.add_values(
+    (
+        ("RANGE_6_144V", 0x0, 6.144, 3),
+        ("RANGE_4_096V", 0x1, 4.096, 2),
+        ("RANGE_2_048V", 0x2, 2.048, 1),
+        ("RANGE_1_024V", 0x3, 1.024, 0.5),
+        ("RANGE_0_512V", 0x4, 0.512, 0.25),
+        ("RANGE_0_256V", 0x5, 0.256, 0.125),
+    )
+)
+
+
+class Mux(CV):
+    """Options for :py:attr:`~adafruit_tla202x.TLA2024.mux` to choose the inputs that voltage will
+    be measured across
+
+    +-------------------------------+--------------+--------------+
+    | Mux                           | Positive Pin | Negative Pin |
+    +===============================+==============+==============+
+    | :py:const:`Mux.MUX_AIN0_AIN1` | AIN 0        | AIN 1        |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN0_AIN3` | AIN 0        | AIN 3        |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN1_AIN3` | AIN 1        | AIN 3        |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN2_AIN3` | AIN 2        | AIN 3        |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN0_GND`  | AIN 0        | GND          |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN1_GND`  | AIN 1        | GND          |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN2_GND`  | AIN 2        | GND          |
+    +-------------------------------+--------------+--------------+
+    | :py:const:`Mux.MUX_AIN3_GND`  | AIN 3        | GND          |
+    +-------------------------------+--------------+--------------+
+
+    """
+
 
 Mux.add_values(
     (
@@ -125,6 +200,8 @@ Mux.add_values(
         ("MUX_AIN3_GND", 0x7, "AIN 3 to GND", None),
     )
 )
+
+
 # TODO: Verify/fix negative voltages
 # * check sign conversion
 # implement AnalogIo/ AnalogRead API

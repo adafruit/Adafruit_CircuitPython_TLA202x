@@ -93,12 +93,12 @@ Mode.add_values(
 
 Range.add_values(
     (
-        ("RANGE_6_144V", 0x0, "±6.144 V", None),
-        ("RANGE_4_096V", 0x1, "±4.096 V", None),
-        ("RANGE_2_048V", 0x2, "±2.048 V", None),
-        ("RANGE_1_024V", 0x3, "±1.024 V", None),
-        ("RANGE_0_512V", 0x4, "±0.512 V", None),
-        ("RANGE_0_256V", 0x5, "±0.256 V", None),
+        ("RANGE_6_144V", 0x0, "±6.144 V", 3),
+        ("RANGE_4_096V", 0x1, "±4.096 V", 2),
+        ("RANGE_2_048V", 0x2, "±2.048 V", 1),
+        ("RANGE_1_024V", 0x3, "±1.024 V", 0.5),
+        ("RANGE_0_512V", 0x4, "±0.512 V", 0.25),
+        ("RANGE_0_256V", 0x5, "±0.256 V", 0.125),
     )
 )
 DataRate.add_values(
@@ -128,6 +128,7 @@ Mux.add_values(
 # TODO: Verify/fix negative voltages
 # * check sign conversion
 # implement AnalogIo/ AnalogRead API
+# GND – 0.3 V < V(AINX) < VDD + 0.3 V
 
 
 class TLA2024:
@@ -224,7 +225,22 @@ class TLA2024:
             raise AttributeError("``mux`` must be a valid ``Mux``")
         self._mux = mux_connection
 
+    def read_channel_one_shot(self, channel):
+        """Switch to the given channel and take a single voltage reading"""
+        self.input_channel(channel)
+        self.mode = Mode.ONE_SHOT  # pylint:disable=no-member
+        return self.voltage
+
     def _convert(self, value):
+        """From datasheet:
+        ≥ +FS (2^11 – 1) / 2^11  ==>  0x7FF0
+        +FS /2^11                ==>  0x0010
+        0                        ==>  0x0000
+        -FS /2^11                ==>  0xFFF0
+        ≤ –FS                    ==>  0x8000
+
+        """
+
         value >>= 4
         if value & (1 << 11):
             value |= 0xF000

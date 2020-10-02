@@ -26,6 +26,7 @@ AnalogIn for ADC readings.
 
 * Author(s): Bryan Siepert
 """
+from . import Range
 
 
 class AnalogIn:
@@ -49,8 +50,8 @@ class AnalogIn:
             raise RuntimeError(
                 "Underlying ADC does not exist, likely due to callint `deinit`"
             )
-        raw_reading = self._tla.read(self._channel_number)
-        return ((raw_reading << 4) / 65535) * self._tla.reference_voltage
+        self._tla.input_channel = self._channel_number
+        return self._tla.voltage
 
     @property
     def value(self):
@@ -72,7 +73,7 @@ class AnalogIn:
             raise RuntimeError(
                 "Underlying ADC does not exist, likely due to callint `deinit`"
             )
-        return self._tla.reference_voltage
+        return Range.string[self._tla.range]
 
     def deinit(self):
         """Release the reference to the TLA202x. Create a new AnalogIn to use it again."""

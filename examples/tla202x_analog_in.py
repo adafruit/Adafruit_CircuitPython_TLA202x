@@ -20,15 +20,30 @@ from adafruit_tla202x.analog_in import AnalogIn
 
 i2c = board.I2C()
 tla = TLA.TLA2024(i2c)
-
-tla_in_0 = AnalogIn(tla, TLA.A0)
+val_max = (2 ** 15) - 1
+pin_0 = AnalogIn(tla, TLA.A0)
+pin_1 = AnalogIn(tla, TLA.A1)
+pin_2 = AnalogIn(tla, TLA.A2)
+pin_3 = AnalogIn(tla, TLA.A3)
+analog_ins = [
+    pin_0,
+    pin_1,
+    pin_2,
+    pin_3,
+]
 while True:
-    raw_value = tla_in_0.value
-    scaled_value = (raw_value / 65535) * tla_in_0.reference_voltage
+    for a_in in analog_ins:
+        raw_value = a_in.value
+        voltage_reference = a_in.reference_voltage
+        scaled_value = (raw_value / val_max) * voltage_reference
 
-    voltage = tla_in_0.voltage
+        voltage = a_in.voltage
+        print("Pin 0 ADC value: %d lsb" % (raw_value))
+        print("Pin 0 Reference Voltage: %0.2fV" % (voltage_reference))
+        print("Pin 0 Measured Voltage: %0.2fV" % (scaled_value))
 
-    print("Pin 0 Scaled Voltage: %0.2fV" % (scaled_value))
-    print("Pin 0 Direct Voltage: %0.2fV" % (voltage))
+        print("")
+
+    print("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_")
     print("")
     time.sleep(1)

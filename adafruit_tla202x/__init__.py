@@ -93,12 +93,12 @@ Mode.add_values(
 
 Range.add_values(
     (
-        ("RANGE_6_144V", 0x0, "±6.144 V", 3),
-        ("RANGE_4_096V", 0x1, "±4.096 V", 2),
-        ("RANGE_2_048V", 0x2, "±2.048 V", 1),
-        ("RANGE_1_024V", 0x3, "±1.024 V", 0.5),
-        ("RANGE_0_512V", 0x4, "±0.512 V", 0.25),
-        ("RANGE_0_256V", 0x5, "±0.256 V", 0.125),
+        ("RANGE_6_144V", 0x0, 6.144, 3),
+        ("RANGE_4_096V", 0x1, 4.096, 2),
+        ("RANGE_2_048V", 0x2, 2.048, 1),
+        ("RANGE_1_024V", 0x3, 1.024, 0.5),
+        ("RANGE_0_512V", 0x4, 0.512, 0.25),
+        ("RANGE_0_256V", 0x5, 0.256, 0.125),
     )
 )
 DataRate.add_values(
@@ -131,7 +131,7 @@ Mux.add_values(
 # GND – 0.3 V < V(AINX) < VDD + 0.3 V
 
 
-class TLA2024:
+class TLA2024:  # pylint:disable=too-many-instance-attributes
     """I2C Interface for analog voltage measurements using the TI TLA2024 12-bit 4-channel ADC
 
     params:
@@ -154,8 +154,9 @@ class TLA2024:
         self._last_one_shot = None
         self.mode = Mode.CONTINUOUS
         self.mux = Mux.MUX_AIN0_GND
+        # default to widest range and highest sample rate
         self.data_rate = DataRate.RATE_3300SPS
-        self.range = Range.RANGE_2_048V
+        self.range = Range.RANGE_6_144V
 
     @property
     def voltage(self):
@@ -187,7 +188,7 @@ class TLA2024:
     @mode.setter
     def mode(self, mode):
         if not Mode.is_valid(mode):
-            raise AttributeError("``mode`` must be a valid ``Mode``")
+            raise AttributeError("``mode`` must be a valid Mode")
         if mode == Mode.CONTINUOUS:  # pylint:disable=no-member
             self._mode = mode
             return
@@ -200,6 +201,18 @@ class TLA2024:
         self._last_one_shot = self._read_volts()
 
     @property
+    def range(self):
+        """The measurement range of the ADC, changed by adjusting the Programmable Gain Amplifier
+        `range` must be an ``adafruit_tla202x.Range``"""
+        return self._pga
+
+    @range.setter
+    def range(self, measurement_range):
+        if not Range.is_valid(measurement_range):
+            raise AttributeError("range must be a valid Range")
+        self._pga = measurement_range
+
+    @property
     def data_rate(self):
         """selects the rate at which measurement samples are taken. Must be an
         ``adafruit_tla202x.DataRate``"""
@@ -208,7 +221,7 @@ class TLA2024:
     @data_rate.setter
     def data_rate(self, rate):
         if not DataRate.is_valid(rate):  # pylint:disable=no-member
-            raise AttributeError("``data_rate`` must be a valid ``DataRate``")
+            raise AttributeError("``data_rate`` must be a valid DataRate")
         self._data_rate = rate
 
     @property
@@ -220,15 +233,17 @@ class TLA2024:
 
     @mux.setter
     def mux(self, mux_connection):
+        print("muxin'")
         if not Mux.is_valid(mux_connection):  # pylint:disable=no-member
-            raise AttributeError("``mux`` must be a valid ``Mux``")
+            raise AttributeError("``mux`` must be a valid Mux")
         self._mux = mux_connection
 
     def read(self, channel):
-        """Switch to the given channel and take a single voltage reading in One Shot mode"""
-        self.input_channel = channel
+        """Switch to the given channel and take a single ADC reading in One Shot mode"""
+        if not self.input_channel == channel:
+            self.input_channel = channel
         self.mode = Mode.ONE_SHOT  # pylint:disable=no-member
-        return self.voltage
+        return self._read_adc()
 
     def _read_volts(self):
         """From datasheet:
@@ -240,16 +255,18 @@ class TLA2024:
 
         """
 
-        value_lsb = self._read_lsb()
-        v_fsr = 8192 >> self.range
-        if self.range == 0:
-            v_fsr = 6144
-        v_fsr = float(v_fsr)
-        converted = (value_lsb / 2047.0) * v_fsr
+        value_lsb = self._read_adc()
+        # print("value_lsb:", hex(value_lsb))
+        # v_fsr = 8192 >> self.range
+        # if self.range == 0:
+        #     v_fsr = 6144
+        # v_fsr = float(v_fsr)
+        # converted = (value_lsb / 2047.0) * v_fsr
 
-        return converted / 1000.0
+        # return converted / 1000.0
+        return value_lsb * Range.lsb[self.range] / 1000.0
 
-    def _read_lsb(self):
+    def _read_adc(self):
         value_lsb = self._raw_adc_read
         value_lsb >>= 4
 

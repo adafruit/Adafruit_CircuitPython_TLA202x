@@ -13,15 +13,6 @@ for i in range(4):
     channel = i
     tla.input_channel = channel
     print("Channel", channel, ":", tla.voltage)
-# Mux.MUX_AIN0_AIN1 X
-# Mux.MUX_AIN0_AIN3  X
-# Mux.MUX_AIN1_AIN3  X
-# Mux.MUX_AIN2_AIN3 X
-# Mux.MUX_AIN0_GND   X
-# Mux.MUX_AIN1_GND   X
-# Mux.MUX_AIN2_GND   X
-# Mux.MUX_AIN3_GND   X
-
 
 muxen = [
     [Mux.MUX_AIN0_GND, 0.5],

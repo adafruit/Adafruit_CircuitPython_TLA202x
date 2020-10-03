@@ -68,7 +68,8 @@ class AnalogIn:
     @property
     def reference_voltage(self):
         """The maximum voltage measurable (also known as the reference voltage) as a float in
-        Volts. Assumed to be 3.3V but can be overridden using the `TLA202x` constructor"""
+        Volts. Assumed to be 3.3V but can be overridden using the
+        :py:class:`~adafruit_tla202x.TLA2024` constructor"""
         if not self._tla:
             raise RuntimeError(
                 "Underlying ADC does not exist, likely due to callint `deinit`"

@@ -123,7 +123,10 @@ class Mode(CV):
 
 
 Mode.add_values(
-    (("CONTINUOUS", 0, "Continuous", None), ("ONE_SHOT", 1, "One Shot", None),)
+    (
+        ("CONTINUOUS", 0, "Continuous", None),
+        ("ONE_SHOT", 1, "One Shot", None),
+    )
 )
 
 

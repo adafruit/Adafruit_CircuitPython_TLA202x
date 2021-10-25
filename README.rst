@@ -73,6 +73,11 @@ Usage Example
         print("Channel %d: %2f V"%(channel, tla.voltage))
 
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/tla202x/en/latest/>`_.
+
 Contributing
 ============
 

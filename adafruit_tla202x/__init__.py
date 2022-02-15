@@ -51,7 +51,9 @@ class CV:
     """struct helper"""
 
     @classmethod
-    def add_values(cls, value_tuples: Tuple[str, int, Union[float, str], Optional[float]]) -> None:
+    def add_values(
+        cls, value_tuples: Tuple[str, int, Union[float, str], Optional[float]]
+    ) -> None:
         "creates CV entires"
         cls.string = {}
         cls.lsb = {}

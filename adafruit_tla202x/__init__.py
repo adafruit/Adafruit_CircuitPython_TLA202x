@@ -33,6 +33,12 @@ from adafruit_register.i2c_struct import ROUnaryStruct
 from adafruit_register.i2c_bits import RWBits
 from adafruit_register.i2c_bit import RWBit
 
+try:
+    from typing import Tuple, Union, Optional
+    from busio import I2C
+except ImportError:
+    pass
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLA202x.git"
 
@@ -45,7 +51,9 @@ class CV:
     """struct helper"""
 
     @classmethod
-    def add_values(cls, value_tuples):
+    def add_values(
+        cls, value_tuples: Tuple[str, int, Union[float, str], Optional[float]]
+    ) -> None:
         "creates CV entires"
         cls.string = {}
         cls.lsb = {}
@@ -57,7 +65,7 @@ class CV:
             cls.lsb[value] = lsb
 
     @classmethod
-    def is_valid(cls, value):
+    def is_valid(cls, value: str) -> bool:
         "Returns true if the given value is a member of the CV"
         return value in cls.string
 
@@ -209,7 +217,7 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
 
     I2C Interface for analog voltage measurements using the TI TLA2024 12-bit 4-channel ADC
 
-        :param i2c_bus: The I2C bus that the ADC is on.
+        :param ~I2C i2c_bus: The I2C bus that the ADC is on.
         :param int address: The I2C address for the ADC. Defaults to ~0x48
     """
 
@@ -221,7 +229,7 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
     _mode = RWBit(_CONFIG_REG, 8, 2, lsb_first=False)
     _data_rate = RWBits(3, _CONFIG_REG, 5, 2, lsb_first=False)
 
-    def __init__(self, i2c_bus, address=_TLA_DEFAULT_ADDRESS):
+    def __init__(self, i2c_bus: I2C, address: int = _TLA_DEFAULT_ADDRESS) -> None:
 
         # pylint:disable=no-member
 
@@ -234,35 +242,31 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
         self.range = Range.RANGE_6_144V
 
     @property
-    def voltage(self):
+    def voltage(self) -> float:
         """The voltage between the two selected inputs"""
         if self.mode == Mode.ONE_SHOT:  # pylint:disable=no-member
             return self._last_one_shot
         return self._read_volts()
 
     @property
-    def input_channel(self):
-        """The channel to be sampled"""
+    def input_channel(self) -> int:
+        """The input channel number (0-4) to measure the voltage at, referenced to GND."""
         return self._mux
 
     @input_channel.setter
-    def input_channel(self, channel):
-        """The input number to measure the voltage at, referenced to GND.
-
-        :param channel: The channel number to switch to, from 0-4"""
-
+    def input_channel(self, channel: int) -> None:
         if channel not in range(4):
             raise AttributeError("input_channel must be set to a number from 0 to 3")
         self._mux = 4 + channel
 
     @property
-    def mode(self):
+    def mode(self) -> int:
         """The measurement mode of the sensor. Must be a :py:const:`~Mode`.  See the documentation
         for :py:const:`~Mode` for more information"""
         return self._mode
 
     @mode.setter
-    def mode(self, mode):
+    def mode(self, mode: int) -> None:
         if not Mode.is_valid(mode):
             raise AttributeError("mode must be a valid Mode")
         if mode == Mode.CONTINUOUS:  # pylint:disable=no-member
@@ -277,47 +281,47 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
         self._last_one_shot = self._read_volts()
 
     @property
-    def range(self):
+    def range(self) -> int:
         """The measurement range of the ADC, changed by adjusting the Programmable Gain Amplifier
         `range` must be a :py:const:`~Range`.  See the documentation for :py:const:`~Range`
         for more information"""
         return self._pga
 
     @range.setter
-    def range(self, measurement_range):
+    def range(self, measurement_range: int) -> None:
         if not Range.is_valid(measurement_range):
             raise AttributeError("range must be a valid Range")
         self._pga = measurement_range
 
     @property
-    def data_rate(self):
-        """selects the rate at which measurement samples are taken.  Must be a :py:const:`~DataRate`
+    def data_rate(self) -> int:
+        """Selects the rate at which measurement samples are taken.  Must be a :py:const:`~DataRate`
         . See the documentation for :py:const:`~DataRate` for more information"""
         return self._data_rate
 
     @data_rate.setter
-    def data_rate(self, rate):
+    def data_rate(self, rate: int) -> None:
         if not DataRate.is_valid(rate):  # pylint:disable=no-member
             raise AttributeError("data_rate must be a valid DataRate")
         self._data_rate = rate
 
     @property
-    def mux(self):
+    def mux(self) -> int:
         """selects the inputs that voltage will be measured between. Must be a
         :py:const:`~adafruit_tla202x.Mux`. See the :py:const:`~adafruit_tla202x.Mux` documentation
         for more information about the available options"""
         return self._mux
 
     @mux.setter
-    def mux(self, mux_connection):
+    def mux(self, mux_connection: int) -> None:
         if not Mux.is_valid(mux_connection):  # pylint:disable=no-member
             raise AttributeError("mux must be a valid Mux")
         self._mux = mux_connection
 
-    def read(self, channel):
+    def read(self, channel: int) -> int:
         """Switch to the given channel and take a single ADC reading in One Shot mode
 
-        :param channel: The channel number to switch to, from 0-3
+        :param int channel: The channel number to switch to, from 0-3
 
         """
         if not self.input_channel == channel:
@@ -325,11 +329,11 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
         self.mode = Mode.ONE_SHOT  # pylint:disable=no-member
         return self._read_adc()
 
-    def _read_volts(self):
+    def _read_volts(self) -> float:
         value_lsb = self._read_adc()
         return value_lsb * Range.lsb[self.range] / 1000.0
 
-    def _read_adc(self):
+    def _read_adc(self) -> int:
         value_lsb = self._raw_adc_read
         value_lsb >>= 4
 

@@ -215,7 +215,7 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
 
     I2C Interface for analog voltage measurements using the TI TLA2024 12-bit 4-channel ADC
 
-        :param i2c_bus: The I2C bus that the ADC is on.
+        :param ~I2C i2c_bus: The I2C bus that the ADC is on.
         :param int address: The I2C address for the ADC. Defaults to ~0x48
     """
 
@@ -323,7 +323,7 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
     def read(self, channel: int) -> int:
         """Switch to the given channel and take a single ADC reading in One Shot mode
 
-        :param channel: The channel number to switch to, from 0-3
+        :param int channel: The channel number to switch to, from 0-3
 
         """
         if not self.input_channel == channel:

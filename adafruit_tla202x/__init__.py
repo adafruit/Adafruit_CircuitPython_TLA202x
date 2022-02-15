@@ -292,8 +292,8 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
         self._pga = measurement_range
 
     @property
-        """selects the rate at which measurement samples are taken.  Must be a :py:const:`~DataRate`
     def data_rate(self) -> int:
+        """Selects the rate at which measurement samples are taken.  Must be a :py:const:`~DataRate`
         . See the documentation for :py:const:`~DataRate` for more information"""
         return self._data_rate
 

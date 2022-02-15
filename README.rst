@@ -59,7 +59,7 @@ To install in a virtual environment in your current project:
 Usage Example
 =============
 
-.. code-block: python3
+.. code-block:: python3
 
     import board
     import busio

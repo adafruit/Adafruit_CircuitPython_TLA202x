@@ -247,15 +247,11 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
         return self._read_volts()
 
     @property
-        """The channel to be sampled"""
     def input_channel(self) -> int:
+        """The input channel number (0-4) to measure the voltage at, referenced to GND."""
         return self._mux
 
     @input_channel.setter
-        """The input number to measure the voltage at, referenced to GND.
-
-        :param channel: The channel number to switch to, from 0-4"""
-
     def input_channel(self, channel: int) -> None:
         if channel not in range(4):
             raise AttributeError("input_channel must be set to a number from 0 to 3")

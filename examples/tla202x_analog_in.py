@@ -20,7 +20,7 @@ from adafruit_tla202x.analog_in import AnalogIn
 
 i2c = board.I2C()
 tla = TLA.TLA2024(i2c)
-val_max = (2 ** 15) - 1
+val_max = (2**15) - 1
 pin_0 = AnalogIn(tla, TLA.A0)
 pin_1 = AnalogIn(tla, TLA.A1)
 pin_2 = AnalogIn(tla, TLA.A2)

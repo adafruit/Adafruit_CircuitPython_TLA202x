@@ -39,7 +39,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TLA202x.git"
 
 _TLA_DEFAULT_ADDRESS = const(0x48)

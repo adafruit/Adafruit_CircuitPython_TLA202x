@@ -18,7 +18,8 @@ from adafruit_tla202x.analog_in import AnalogIn
 #
 ########################################
 
-i2c = board.I2C()
+i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 tla = TLA.TLA2024(i2c)
 val_max = (2**15) - 1
 pin_0 = AnalogIn(tla, TLA.A0)

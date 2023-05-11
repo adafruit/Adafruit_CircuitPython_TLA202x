@@ -230,7 +230,6 @@ class TLA2024:  # pylint:disable=too-many-instance-attributes
     _data_rate = RWBits(3, _CONFIG_REG, 5, 2, lsb_first=False)
 
     def __init__(self, i2c_bus: I2C, address: int = _TLA_DEFAULT_ADDRESS) -> None:
-
         # pylint:disable=no-member
 
         self.i2c_device = I2CDevice(i2c_bus, address)

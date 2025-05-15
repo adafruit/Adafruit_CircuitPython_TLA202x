@@ -1,4 +1,7 @@
 
+API Reference
+#############
+
 .. automodule:: adafruit_tla202x
    :members:
 

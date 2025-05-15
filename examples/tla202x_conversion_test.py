@@ -9,8 +9,10 @@
 -FS /2^11                ==>  0xFFF0
 ≤ –FS                    ==>  0x8000
 """
+
 import board
 import busio
+
 from adafruit_tla202x import TLA2024
 
 i2c = busio.I2C(board.SCL, board.SDA)

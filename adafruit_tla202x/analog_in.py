@@ -26,6 +26,7 @@ AnalogIn for ADC readings.
 
 * Author(s): Bryan Siepert
 """
+
 from . import Range
 
 
@@ -47,9 +48,7 @@ class AnalogIn:
         """Returns the value of an ADC channel in volts as compared to the reference voltage."""
 
         if not self._tla:
-            raise RuntimeError(
-                "Underlying ADC does not exist, likely due to callint `deinit`"
-            )
+            raise RuntimeError("Underlying ADC does not exist, likely due to callint `deinit`")
         self._tla.input_channel = self._channel_number
         return self._tla.voltage
 
@@ -59,9 +58,7 @@ class AnalogIn:
         The value is scaled to a 16-bit integer from the native 12-bit value."""
 
         if not self._tla:
-            raise RuntimeError(
-                "Underlying ADC does not exist, likely due to callint `deinit`"
-            )
+            raise RuntimeError("Underlying ADC does not exist, likely due to callint `deinit`")
 
         return self._tla.read(self._channel_number) << 4
 
@@ -71,9 +68,7 @@ class AnalogIn:
         Volts. Assumed to be 3.3V but can be overridden using the
         :py:class:`~adafruit_tla202x.TLA2024` constructor"""
         if not self._tla:
-            raise RuntimeError(
-                "Underlying ADC does not exist, likely due to callint `deinit`"
-            )
+            raise RuntimeError("Underlying ADC does not exist, likely due to callint `deinit`")
         return Range.string[self._tla.range]
 
     def deinit(self):

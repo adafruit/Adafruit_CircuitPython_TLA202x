@@ -4,6 +4,7 @@
 # pylint:disable=no-member
 import board
 import busio
+
 from adafruit_tla202x import TLA2024
 
 i2c = busio.I2C(board.SCL, board.SDA)

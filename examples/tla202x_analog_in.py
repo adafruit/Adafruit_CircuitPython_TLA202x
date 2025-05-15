@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2020 Bryan Siepert for Adafruit Industries
 # SPDX-License-Identifier: MIT
 import time
+
 import board
 
 import adafruit_tla202x.tla2024 as TLA

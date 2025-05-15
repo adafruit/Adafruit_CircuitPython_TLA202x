@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: 2020 Bryan Siepert, written for Adafruit Industries
 #
 # SPDX-License-Identifier: Unlicense
-# pylint:disable=no-member
 import board
 import busio
+
 from adafruit_tla202x import TLA2024, Mux
 
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -38,7 +38,4 @@ for mux, ev in muxen:
         result = "PASSED!"
     else:
         result = "FAIL :("
-    print(
-        "Mux: %s\tEV: %3f\tActual: %3f\tDelta: %5f\t%s"
-        % (name, ev, actual, delta, result)
-    )
+    print(f"Mux: {name}\tEV: {ev:3f}\tActual: {actual:3f}\tDelta: {delta:5f}\t{result}")

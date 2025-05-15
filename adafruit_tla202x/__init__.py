@@ -26,15 +26,15 @@ Implementation Notes
 * `Adafruit's Register library: <https://github.com/adafruit/Adafruit_CircuitPython_Register>`_
 """
 
+from adafruit_bus_device.i2c_device import I2CDevice
+from adafruit_register.i2c_bit import RWBit
+from adafruit_register.i2c_bits import RWBits
+from adafruit_register.i2c_struct import ROUnaryStruct
 from micropython import const
 
-from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register.i2c_struct import ROUnaryStruct
-from adafruit_register.i2c_bits import RWBits
-from adafruit_register.i2c_bit import RWBit
-
 try:
-    from typing import Tuple, Union, Optional
+    from typing import Optional, Tuple, Union
+
     from busio import I2C
 except ImportError:
     pass
@@ -51,9 +51,7 @@ class CV:
     """struct helper"""
 
     @classmethod
-    def add_values(
-        cls, value_tuples: Tuple[str, int, Union[float, str], Optional[float]]
-    ) -> None:
+    def add_values(cls, value_tuples: Tuple[str, int, Union[float, str], Optional[float]]) -> None:
         "creates CV entires"
         cls.string = {}
         cls.lsb = {}

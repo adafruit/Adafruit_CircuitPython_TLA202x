@@ -40,9 +40,9 @@ while True:
         scaled_value = (raw_value / val_max) * voltage_reference
 
         voltage = a_in.voltage
-        print("Pin 0 ADC value: %d lsb" % (raw_value))
-        print("Pin 0 Reference Voltage: %0.2fV" % (voltage_reference))
-        print("Pin 0 Measured Voltage: %0.2fV" % (scaled_value))
+        print(f"Pin 0 ADC value: {raw_value:d} lsb")
+        print(f"Pin 0 Reference Voltage: {voltage_reference:0.2f}V")
+        print(f"Pin 0 Measured Voltage: {scaled_value:0.2f}V")
 
         print("")
 
